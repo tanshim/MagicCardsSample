@@ -9,19 +9,27 @@ import UIKit
 
 class CardTableViewCell: UITableViewCell {
 
+    static let cellId = "cardCell"
+
     var cardModel: Card? {
         didSet {
             nameLabel.text = cardModel?.name
             typeLabel.text = cardModel?.type
 
-            guard let imagePath = cardModel?.imageUrl,
-                  let imageURL = URL(string: imagePath),
-                  let imageData = try? Data(contentsOf: imageURL)
-            else {
-                iconImageView.image = UIImage(systemName: "sailboat.circle")
-                return
+            DispatchQueue.global(qos: .userInteractive).async {
+                guard let imagePath = self.cardModel?.imageUrl,
+                      let imageURL = URL(string: imagePath),
+                      let imageData = try? Data(contentsOf: imageURL)
+                else {
+                    DispatchQueue.main.async {
+                        self.iconImageView.image = UIImage(systemName: "sailboat.circle")
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.iconImageView.image = UIImage(data: imageData)
+                }
             }
-            iconImageView.image = UIImage(data: imageData)
         }
     }
 
@@ -32,24 +40,22 @@ class CardTableViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         imageView.layer.masksToBounds = true
-        imageView.tintColor = .white
-        imageView.contentMode = .center
+        imageView.tintColor = .black
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
     lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
         label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 20)
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
 
     lazy var typeLabel: UILabel = {
         let label = UILabel()
-        label.text = ""
         label.textColor = .black
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 16)
         return label
     }()
 
@@ -86,7 +92,7 @@ class CardTableViewCell: UITableViewCell {
         iconImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.leading.equalToSuperview().offset(10)
-            make.size.equalTo(40)
+            make.size.equalTo(100)
         }
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)

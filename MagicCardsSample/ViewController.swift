@@ -11,7 +11,7 @@ import SnapKit
 
 class ViewController: UIViewController {
 
-    private var cards: [Card] = []
+    private var cards: [Card]?
 
     // MARK: - UI
 
@@ -44,61 +44,64 @@ class ViewController: UIViewController {
 
     private lazy var cardsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
-        tableView.register(CardTableViewCell.self, forCellReuseIdentifier: "cardCell")
+        tableView.register(CardTableViewCell.self, forCellReuseIdentifier: CardTableViewCell.cellId)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 100
+        tableView.rowHeight = 120
         return tableView
     }()
-
 
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchCards()
         setupViews()
         setupConstraints()
+        fetchCards()
     }
 
     // MARK: - Setup
 
     func setupViews() {
         view.backgroundColor = .white
-        view.addSubview(searchTextField)
-        view.addSubview(searchButton)
+//        view.addSubview(searchTextField)
+//        view.addSubview(searchButton)
         view.addSubview(cardsTableView)
     }
 
     func setupConstraints() {
-        searchTextField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(10)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(30)
-            make.width.equalTo(200)
-        }
-        searchButton.snp.makeConstraints { make in
-            make.leading.equalTo(searchTextField.snp.trailing).offset(10)
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.height.equalTo(30)
-            make.width.equalTo(70)
-        }
+// Commented lines for the next Task *
+// Todo
+
+//        searchTextField.snp.makeConstraints { make in
+//            make.leading.equalToSuperview().offset(10)
+//            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.height.equalTo(30)
+//            make.width.equalTo(200)
+//        }
+//        searchButton.snp.makeConstraints { make in
+//            make.leading.equalTo(searchTextField.snp.trailing).offset(10)
+//            make.top.equalTo(view.safeAreaLayoutGuide)
+//            make.height.equalTo(30)
+//            make.width.equalTo(70)
+//        }
+//        cardsTableView.snp.makeConstraints { make in
+//            make.top.equalTo(searchTextField.snp.bottom).offset(10)
+//            make.leading.equalToSuperview()
+//            make.trailing.equalToSuperview()
+//        }
         cardsTableView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.top.equalTo(searchTextField.snp.bottom).offset(10)
+            make.edges.equalToSuperview()
         }
     }
 
     // MARK: - Fetch data
 
     func fetchCards() {
-        let request = AF.request("https://api.magicthegathering.io/v1/cards")
+        let request = AF.request("https://api.magicthegathering.io/v1/cards?pageSize=30")
         request.responseDecodable(of: Cards.self) { (data) in
-            print(data.response?.statusCode)
             guard let response = data.value else { return }
-            //print(data.value)
-            let cards = response.cards
-            print(cards.first ?? "Empty")
+            let cards = response.cards.filter { $0.imageUrl != nil }
             self.cards = cards
             self.cardsTableView.reloadData()
         }
@@ -109,52 +112,22 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cards.count
+        return cards?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellModel = cards[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cardCell", for: indexPath) as? CardTableViewCell
-//        cell?.cardModel = cellModel
-//        print(cell ?? "empty1")
-        cell?.nameLabel.text = cellModel.name
-        cell?.typeLabel.text = cellModel.type
-        guard let imagePath = cellModel.imageUrl,
-              let imageURL = URL(string: imagePath),
-              let imageData = try? Data(contentsOf: imageURL)
-        else {
-            cell?.iconImageView.image = UIImage(systemName: "sailboat.circle")
-            return cell ?? UITableViewCell()
-        }
-        cell?.iconImageView.image = UIImage(data: imageData)
+        let cellModel = cards?[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: CardTableViewCell.cellId, for: indexPath) as? CardTableViewCell
+        cell?.cardModel = cellModel
         return cell ?? UITableViewCell()
     }
 
-}
-
-extension UITextField {
-    func setLeftIcon(_ image: UIImage) {
-        let iconView = UIImageView(frame: CGRect(x: 25, y: 2.5, width: 25, height: 25))
-        iconView.image = image
-        let iconContainerView: UIView = UIView(frame: CGRect(x: 30, y: 0, width: 55, height: 30))
-        iconContainerView.addSubview(iconView)
-        leftView = iconContainerView
-        leftViewMode = .always
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let cellModel = cards?[indexPath.row]
+        let viewController = CardDetailViewController()
+        viewController.cardModel = cellModel
+        present(viewController, animated: true)
     }
 
-    func setLeftPadding(_ padding: CGFloat) {
-        let paddingView = UIView(frame:
-                                    CGRect(x: 0, y: 0, width: padding,
-                                           height: self.frame.size.height))
-        self.leftView = paddingView
-        self.leftViewMode = .always
-    }
-
-    func setRightPadding(_ padding: CGFloat) {
-        let paddingView = UIView(frame:
-                                    CGRect(x: 0, y: 0, width: padding,
-                                           height: self.frame.size.height))
-        self.rightView = paddingView
-        self.rightViewMode = .always
-    }
 }

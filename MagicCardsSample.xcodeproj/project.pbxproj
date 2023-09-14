@@ -11,6 +11,8 @@
 		4D1DD0D92AAE378B0092E653 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1DD0D82AAE378B0092E653 /* Card.swift */; };
 		4D1DD0DB2AAE3C920092E653 /* CardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1DD0DA2AAE3C920092E653 /* CardTableViewCell.swift */; };
 		4D1DD0DE2AAE3D590092E653 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4D1DD0DD2AAE3D590092E653 /* SnapKit */; };
+		4D3422112AB3635A00EA1EF2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3422102AB3635A00EA1EF2 /* Extensions.swift */; };
+		4D3422132AB366A600EA1EF2 /* CardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3422122AB366A600EA1EF2 /* CardDetailViewController.swift */; };
 		4D7690BC2AA8BE17001FD43E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7690BB2AA8BE17001FD43E /* AppDelegate.swift */; };
 		4D7690BE2AA8BE17001FD43E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7690BD2AA8BE17001FD43E /* SceneDelegate.swift */; };
 		4D7690C02AA8BE17001FD43E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7690BF2AA8BE17001FD43E /* ViewController.swift */; };
@@ -21,6 +23,8 @@
 /* Begin PBXFileReference section */
 		4D1DD0D82AAE378B0092E653 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		4D1DD0DA2AAE3C920092E653 /* CardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTableViewCell.swift; sourceTree = "<group>"; };
+		4D3422102AB3635A00EA1EF2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		4D3422122AB366A600EA1EF2 /* CardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDetailViewController.swift; sourceTree = "<group>"; };
 		4D7690B82AA8BE17001FD43E /* MagicCardsSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagicCardsSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D7690BB2AA8BE17001FD43E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D7690BD2AA8BE17001FD43E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -64,12 +68,14 @@
 			children = (
 				4D7690BB2AA8BE17001FD43E /* AppDelegate.swift */,
 				4D7690BD2AA8BE17001FD43E /* SceneDelegate.swift */,
+				4D1DD0D82AAE378B0092E653 /* Card.swift */,
 				4D7690BF2AA8BE17001FD43E /* ViewController.swift */,
+				4D1DD0DA2AAE3C920092E653 /* CardTableViewCell.swift */,
+				4D3422122AB366A600EA1EF2 /* CardDetailViewController.swift */,
+				4D3422102AB3635A00EA1EF2 /* Extensions.swift */,
 				4D7690C42AA8BE18001FD43E /* Assets.xcassets */,
 				4D7690C62AA8BE18001FD43E /* LaunchScreen.storyboard */,
 				4D7690C92AA8BE18001FD43E /* Info.plist */,
-				4D1DD0D82AAE378B0092E653 /* Card.swift */,
-				4D1DD0DA2AAE3C920092E653 /* CardTableViewCell.swift */,
 			);
 			path = MagicCardsSample;
 			sourceTree = "<group>";
@@ -153,10 +159,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D1DD0DB2AAE3C920092E653 /* CardTableViewCell.swift in Sources */,
+				4D3422112AB3635A00EA1EF2 /* Extensions.swift in Sources */,
 				4D7690C02AA8BE17001FD43E /* ViewController.swift in Sources */,
 				4D7690BC2AA8BE17001FD43E /* AppDelegate.swift in Sources */,
 				4D7690BE2AA8BE17001FD43E /* SceneDelegate.swift in Sources */,
 				4D1DD0D92AAE378B0092E653 /* Card.swift in Sources */,
+				4D3422132AB366A600EA1EF2 /* CardDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
