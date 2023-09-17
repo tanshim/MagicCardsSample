@@ -12,6 +12,7 @@ import SnapKit
 class ViewController: UIViewController {
 
     private var cards: [Card]?
+    private var searchResults: [Card]?
 
     // MARK: - UI
 
@@ -22,15 +23,16 @@ class ViewController: UIViewController {
         textField.setLeftPadding(10.0)
         textField.setRightPadding(10.0)
         textField.layer.cornerRadius = 15
-        textField.backgroundColor = .clear
+        textField.backgroundColor = UIColor(red: 0.75, green: 0.83, blue: 0.95, alpha: 1.00)
         return textField
     }()
 
     private lazy var searchButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Search", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(red: 0.42, green: 0.45, blue: 0.81, alpha: 1.00)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(searchCards), for: .touchUpInside)
+        button.backgroundColor = UIColor(red: 0.75, green: 0.83, blue: 0.95, alpha: 1.00)
         button.clipsToBounds = true
         button.layer.cornerRadius = 15
         button.layer.shadowColor = UIColor.black.cgColor
@@ -64,34 +66,27 @@ class ViewController: UIViewController {
 
     func setupViews() {
         view.backgroundColor = .white
-//        view.addSubview(searchTextField)
-//        view.addSubview(searchButton)
+        view.addSubview(searchTextField)
+        view.addSubview(searchButton)
         view.addSubview(cardsTableView)
     }
 
     func setupConstraints() {
-// Commented lines for the next Task *
-// Todo
-
-//        searchTextField.snp.makeConstraints { make in
-//            make.leading.equalToSuperview().offset(10)
-//            make.top.equalTo(view.safeAreaLayoutGuide)
-//            make.height.equalTo(30)
-//            make.width.equalTo(200)
-//        }
-//        searchButton.snp.makeConstraints { make in
-//            make.leading.equalTo(searchTextField.snp.trailing).offset(10)
-//            make.top.equalTo(view.safeAreaLayoutGuide)
-//            make.height.equalTo(30)
-//            make.width.equalTo(70)
-//        }
-//        cardsTableView.snp.makeConstraints { make in
-//            make.top.equalTo(searchTextField.snp.bottom).offset(10)
-//            make.leading.equalToSuperview()
-//            make.trailing.equalToSuperview()
-//        }
+        searchTextField.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(10)
+            make.top.equalToSuperview().offset(80)
+            make.height.equalTo(30)
+            make.width.equalTo(200)
+        }
+        searchButton.snp.makeConstraints { make in
+            make.leading.equalTo(searchTextField.snp.trailing).offset(10)
+            make.top.equalToSuperview().offset(80)
+            make.height.equalTo(30)
+            make.width.equalTo(70)
+        }
         cardsTableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(searchButton.snp.bottom).offset(10)
+            make.bottom.leading.trailing.equalToSuperview()
         }
     }
 
@@ -100,14 +95,49 @@ class ViewController: UIViewController {
     func fetchCards() {
         let request = AF.request("https://api.magicthegathering.io/v1/cards?pageSize=30")
         request.responseDecodable(of: Cards.self) { (data) in
-            guard let response = data.value else { return }
+            guard let response = data.value else {
+                self.showUIAlert(message: "Something went wrong!")
+                return
+            }
             let cards = response.cards.filter { $0.imageUrl != nil }
             self.cards = cards
             self.cardsTableView.reloadData()
         }
     }
 
+    @objc func searchCards() {
+        guard let param = searchTextField.text,
+        param.count > 0 else {
+            self.showUIAlert(message: "Enter search parameters!")
+            return
+        }
+        let url = "https://api.magicthegathering.io/v1/cards?pageSize=30&name=\(param)"
+        let request = AF.request(url)
+        request.responseDecodable(of: Cards.self) { data in
+            guard let response = data.value else { return }
+            let cards = response.cards.filter { $0.imageUrl != nil }
+            guard cards.count > 0 else {
+                self.showUIAlert(message: "No results!")
+                return
+            }
+            self.cards = cards
+            self.cardsTableView.reloadData()
+        }
+    }
+
+    func showUIAlert(message: String) {
+        let action = UIAlertAction(title: "OK", style: .destructive)
+        let alertController
+            = UIAlertController(title: "Error!",
+                                message: message,
+                                preferredStyle: .alert)
+        alertController.addAction(action)
+        self.present(alertController, animated: true)
+    }
+
 }
+
+    // MARK: - Table View
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
