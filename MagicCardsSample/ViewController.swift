@@ -20,6 +20,8 @@ class ViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Search"
         textField.textColor = .black
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
         textField.setLeftPadding(10.0)
         textField.setRightPadding(10.0)
         textField.layer.cornerRadius = 15
@@ -35,14 +37,14 @@ class ViewController: UIViewController {
         button.backgroundColor = UIColor(red: 0.75, green: 0.83, blue: 0.95, alpha: 1.00)
         button.clipsToBounds = true
         button.layer.cornerRadius = 15
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.3
-        button.layer.shadowOffset = .zero
-        button.layer.shadowRadius = 10
-        button.layer.shouldRasterize = true
-        button.layer.rasterizationScale = UIScreen.main.scale
         return button
     }()
+
+    private lazy var activityView: UIActivityIndicatorView = {
+            let activityView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+            activityView.color = .gray
+            return activityView
+        }()
 
     private lazy var cardsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -68,21 +70,26 @@ class ViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(searchTextField)
         view.addSubview(searchButton)
+        view.addSubview(activityView)
         view.addSubview(cardsTableView)
     }
 
     func setupConstraints() {
         searchTextField.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.equalToSuperview().offset(10)
-            make.top.equalToSuperview().offset(80)
             make.height.equalTo(30)
             make.width.equalTo(200)
         }
         searchButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(10)
             make.leading.equalTo(searchTextField.snp.trailing).offset(10)
-            make.top.equalToSuperview().offset(80)
             make.height.equalTo(30)
             make.width.equalTo(70)
+        }
+        activityView.snp.makeConstraints{ make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(15)
+            make.leading.equalTo(searchButton.snp.trailing).offset(10)
         }
         cardsTableView.snp.makeConstraints { make in
             make.top.equalTo(searchButton.snp.bottom).offset(10)
@@ -93,15 +100,18 @@ class ViewController: UIViewController {
     // MARK: - Fetch data
 
     func fetchCards() {
+        activityView.startAnimating()
         let request = AF.request("https://api.magicthegathering.io/v1/cards?pageSize=30")
         request.responseDecodable(of: Cards.self) { (data) in
             guard let response = data.value else {
                 self.showUIAlert(message: "Something went wrong!")
+                self.activityView.stopAnimating()
                 return
             }
             let cards = response.cards.filter { $0.imageUrl != nil }
             self.cards = cards
             self.cardsTableView.reloadData()
+            self.activityView.stopAnimating()
         }
     }
 
@@ -111,17 +121,24 @@ class ViewController: UIViewController {
             self.showUIAlert(message: "Enter search parameters!")
             return
         }
+        activityView.startAnimating()
         let url = "https://api.magicthegathering.io/v1/cards?pageSize=30&name=\(param)"
         let request = AF.request(url)
         request.responseDecodable(of: Cards.self) { data in
-            guard let response = data.value else { return }
+            guard let response = data.value else {
+                self.activityView.stopAnimating()
+                self.showUIAlert(message: "No results!")
+                return
+            }
             let cards = response.cards.filter { $0.imageUrl != nil }
             guard cards.count > 0 else {
                 self.showUIAlert(message: "No results!")
+                self.activityView.stopAnimating()
                 return
             }
             self.cards = cards
             self.cardsTableView.reloadData()
+            self.activityView.stopAnimating()
         }
     }
 

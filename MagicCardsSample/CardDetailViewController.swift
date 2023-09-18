@@ -12,8 +12,8 @@ class CardDetailViewController: UIViewController {
 
     var cardModel: Card? {
         didSet {
-            nameLabel.text = "Name: \(cardModel?.name ?? "")"
-            typeLabel.text = "Type: \(cardModel?.type ?? "")"
+            nameLabel.text = "Name: \(cardModel?.name ?? "")."
+            typeLabel.text = "Type: \(cardModel?.type ?? "")."
             textLabel.text = cardModel?.text
 
             DispatchQueue.global(qos: .userInteractive).async {
@@ -65,7 +65,6 @@ class CardDetailViewController: UIViewController {
 
     lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         label.lineBreakMode = .byWordWrapping
@@ -96,20 +95,22 @@ class CardDetailViewController: UIViewController {
 
     private func setupConstraints() {
         iconImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(10)
+            make.top.equalToSuperview().offset(20)
             make.centerX.equalToSuperview()
             make.size.equalTo(300)
         }
         nameLabel.snp.makeConstraints { make in
             make.top.equalTo(iconImageView.snp.bottom).offset(10)
-            make.centerX.equalToSuperview()
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
         }
         typeLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(10)
-            make.centerX.equalToSuperview()
+            make.leading.equalToSuperview().offset(10)
+            make.trailing.equalToSuperview().offset(-10)
         }
         textLabel.snp.makeConstraints { make in
-            make.top.equalTo(typeLabel.snp.bottom).offset(15)
+            make.top.equalTo(typeLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().offset(10)
             make.trailing.equalToSuperview().offset(-10)
         }

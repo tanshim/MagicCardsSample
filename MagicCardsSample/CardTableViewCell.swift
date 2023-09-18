@@ -97,10 +97,12 @@ class CardTableViewCell: UITableViewCell {
         nameLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(15)
             make.leading.equalTo(iconImageView.snp.trailing).offset(15)
+            make.trailing.equalToSuperview().offset(-10)
         }
         typeLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(15)
             make.leading.equalTo(iconImageView.snp.trailing).offset(15)
+            make.trailing.equalToSuperview().offset(-10)
         }
     }
 }
